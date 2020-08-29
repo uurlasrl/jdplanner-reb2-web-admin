@@ -1,6 +1,35 @@
 export const state = () => ({
   loadedPosts: [],
   oDataModel: {},
+
+
+  appLists: [
+    {
+      id: null,
+      AppName: "Roles",
+      AppLink: "/admin/groupmanagement",
+      Description: "namRolemanagement",
+      DocsLink: "https://uurla.it",
+      Rolename: "admin"
+    },
+    {
+      id: null,
+      AppName: "Apps",
+      AppLink: "/admin/appsmanagement",
+      Description: "namAppsmanagement",
+      DocsLink: "https://uurla.it",
+      Rolename: "admin"
+    },
+    {
+      id: null,
+      AppName: "Users",
+      AppLink: "/admin/usersmanagement",
+      Description: "namUsersmanagement",
+      DocsLink: "https://uurla.it",
+      Rolename: "admin"
+    }
+  ],
+
   userData: {
     "id": 0,
     "username": "",
@@ -24,7 +53,8 @@ export const mutations = {
       "expireIn": 0,
       "accessToken": "",
       "tokenType": "Bearer",
-      "loginDateTime": null
+      "loginDateTime": null,
+      "lang": "it"
     }
     state.initialized = false
   },
@@ -39,18 +69,20 @@ export const mutations = {
   setODataModel(state, oModel) {
     state.oDataModel = oModel
   },
-  // initializeStore(store, isInit) {
-  //   store.initialized = isInit
-  // },
+  setLanguage(state, lang) {
+    state.userData.lang = lang
+  }
 }
 export const actions = {
-
+  setLanguage(vuexContext, lang) {
+    vuexContext.commit('setLanguage', lang);
+  },
   refreshToken(vuexContext, data) {
-    this.$axios.$post(process.env.baseUrl+'/api/auth/login', {
+    this.$axios.$post(process.env.baseUrl + '/api/auth/login', {
       "username": data.username,
       "token": data.accessToken,
       "type": "Bearer"
-    },{
+    }, {
       headers: {
         "Conttent-type": "application/json",
         "Accept": "application/json"
@@ -59,7 +91,7 @@ export const actions = {
       .then(function (response) {
         console.log(response)
         vuexContext.commit('setUserData', response.body)
-        localStorage.setItem('uurla-user-data', JSON.stringify( response.body))
+        localStorage.setItem('uurla-user-data', JSON.stringify(response.body))
       })
       .catch(function (error) {
         vuexContext.commit('clearStore')
@@ -70,15 +102,19 @@ export const actions = {
   },
 
   getToken(vuexContext, data) {
+    debugger
+    const that = this
     this.$axios.$post(process.env.baseUrl, {
       "username": data.username,
       "password": data.accessToken,
     })
       .then(function (response) {
-        console.log(response)
-        commit('setUserData', response.body)
-        localStorage.setItem('uurla-user-data', JSON.stringify( response.body))
-      })
+          console.log(response)
+          commit('setUserData', response.body)
+          localStorage.setItem('uurla-user-data', JSON.stringify(response.body))
+
+        }
+      )
       .catch(function (error) {
         //localStorage.removeItem('uurla-user-data')
         console.log(error);
@@ -87,16 +123,16 @@ export const actions = {
   },
 
   initializeStore(vuexContext, options) {
-  //   if (vuexContext.state.initialized) return;
-  //   const userData = localStorage.getItem('uurla-user-data');
-  //
-  //   if (!userData || !userData.accessToken || !userData.loginDateTime || (userData.expireIn + userData.loginDateTime.getTime()) < (new Date()).getTime()) {
-  //     //impossibile inizializzare
-  //     vuexContext.commit('clearStore')
-  //     // if(userData)
-  //     //   localStorage.removeItem('uurla-user-data')
-  //     return;
-  //   }
+    //   if (vuexContext.state.initialized) return;
+    //   const userData = localStorage.getItem('uurla-user-data');
+    //
+    //   if (!userData || !userData.accessToken || !userData.loginDateTime || (userData.expireIn + userData.loginDateTime.getTime()) < (new Date()).getTime()) {
+    //     //impossibile inizializzare
+    //     vuexContext.commit('clearStore')
+    //     // if(userData)
+    //     //   localStorage.removeItem('uurla-user-data')
+    //     return;
+    //   }
 
     // vuexContext.dispatch('refreshToken', {
     //   username: userData.username,
@@ -141,13 +177,20 @@ export const actions = {
       //  vuexContext.commit('setODataModel',{});
     })
 
-  },
+  }
+  ,
   setUserData(vuexContext, user) {
     vuexContext.commit('setUserData', user)
-  },
+
+    //qui devo lanciare la procedura per leggere le autorizzazioni sulle app
+
+
+  }
+  ,
   setPosts(vuexContext, posts) {
     vuexContext.commit('setPosts', posts)
-  },
+  }
+  ,
   setODataModel(vuexContext, options) {
 
   }
@@ -159,5 +202,20 @@ export const getters = {
   },
   getUserData(state) {
     return state.userData
+  },
+  isAuthenticated(state) {
+
+    if (!state.initialized) return (role) => {
+      return false
+    }
+    const expiredRemainingTime = (state.userData.expireIn + state.userData.loginDateTime.getTime()) - (new Date())
+    if (expiredRemainingTime > 0) {
+      return (role) => {
+        return role ? (state.userData.roles.includes(role) >= 0) : true
+      }
+    }
+    return (role) => {
+      return false
+    }
   }
 }

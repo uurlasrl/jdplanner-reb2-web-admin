@@ -1,6 +1,6 @@
 <template>
   <div class="posts-list">
-    <postList :posts="loadedPosts"></postList>
+    <postList :posts="loadedPostsData"></postList>
   </div>
 </template>
 <script>
@@ -13,7 +13,7 @@ export default {
     }
   },
   computed:{
-    loadedPosts(){
+    loadedPostsData(){
       if(typeof this.$store.getters.loadedPosts === "undefined") return []
       return this.$store.getters.loadedPosts;
     }
@@ -21,7 +21,8 @@ export default {
 
   components: {
     PostList
-  }
+  },
+  middleware:'auth'
 }
 </script>
 <style scoped>

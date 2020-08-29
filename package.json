@@ -9,6 +9,7 @@
     "generate": "nuxt generate"
   },
   "dependencies": {
+    "@neneos/nuxt-animate.css": "0.0.1",
     "@nuxtjs/axios": "^5.12.1",
     "@nuxtjs/dotenv": "^1.4.1",
     "@nuxtjs/moment": "^1.6.1",
@@ -16,10 +17,13 @@
     "@popperjs/core": "^2.4.4",
     "bootstrap": "^4.5.2",
     "bootstrap-vue": "^2.16.0",
+    "node-sass": "^4.14.1",
     "nuxt": "^2.14.0",
     "nuxt-i18n": "^6.13.9",
     "portal-vue": "^2.1.7",
-    "vue-country-flag": "^2.0.1"
+    "sass-loader": "^9.0.3",
+    "vue-country-flag": "^2.0.1",
+    "vuelidate": "^0.7.5"
   },
   "devDependencies": {
     "@nuxt/types": "^2.14.1",

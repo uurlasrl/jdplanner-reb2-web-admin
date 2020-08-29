@@ -1,3 +1,5 @@
+import {BModal} from "bootstrap-vue";
+
 export default {
 
   //loading: false,
@@ -30,14 +32,14 @@ export default {
       {rel: 'icon', type: 'image/x-icon', href: '/favicon.ico'},
       {rel: 'stylesheet"', href: 'https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@1,300&display=swap'}
     ],
-    script: [{
-      id: "sap-ui-bootstrap",
-      type: "text/javascript",
-      src: "/resources/sap-ui-core.js",
-      'data-sap-ui-theme': "sap_bluecrystal",
-      'data-sap-ui-libs': "sap.m",
-      'data-sap-ui-compatVersion': "edge"
-    }]
+    // script: [{
+    //   id: "sap-ui-bootstrap",
+    //   type: "text/javascript",
+    //   src: "/resources/sap-ui-core.js",
+    //   'data-sap-ui-theme': "sap_bluecrystal",
+    //   'data-sap-ui-libs': "sap.m",
+    //   'data-sap-ui-compatVersion': "edge"
+    // }]
   },
   /*
   ** Global CSS
@@ -47,7 +49,9 @@ export default {
   ** Plugins to load before mounting the App
   ** https://nuxtjs.org/guide/plugins
   */
-  plugins: [],
+  plugins: [
+    '~/plugins/Vuelidate'
+  ],
   /*
   ** Auto import components
   ** See https://nuxtjs.org/api/configuration-components
@@ -56,7 +60,7 @@ export default {
   /*
   ** Nuxt.js dev-modules
   */
-  buildModules: ['bootstrap-vue/nuxt', '@nuxtjs/moment','@nuxtjs/dotenv'
+  buildModules: [
   ],
 
   /*
@@ -66,9 +70,20 @@ export default {
 
     '@nuxtjs/axios',
     '@nuxtjs/proxy',
-    'nuxt-i18n'
+    'nuxt-i18n',
+    'bootstrap-vue/nuxt', '@nuxtjs/moment',
+    '@neneos/nuxt-animate.css'
 
   ],
+  bootstrapVue: {
+    icons: true, // Install the IconsPlugin (in addition to BootStrapVue plugin
+    bootstrapCSS: true, // Or `css: false`
+    bootstrapVueCSS: true // Or `bvCSS: false`
+    // Add the desired icon components to the `components` array
+    // components: ['BIcon', 'BIconAlertFill', 'BIconCalendar', 'BAvatar', 'BPopover','BModal','BButton','ModalPlugin'],
+    // directives: ['VBModal']
+
+  },
   i18n: {
     lazy: true,
     parsePages: false,
@@ -99,9 +114,10 @@ export default {
       pathRewrite: {"^/uurla-api": ""}
     }
   },
-  env:{
-    apiAuthBaseUrl:'/uurla-api',
-    apiAdminAppBaseUrl:'/admin.svc'
+  publicRuntimeConfig: {
+    baseUrl: 'http://localhost:3000/uurla-api',
+    apiAdminAppBaseUrl: '/admin.svc',
+    apiProjManAppBaseUrl: '/projman.svc'
   },
 
   /*
@@ -109,5 +125,13 @@ export default {
   ** See https://nuxtjs.org/api/configuration-build/
   */
   build: {},
-  srcDir:'src/'
+  //srcDir: 'src/'//,
+  // resolve: {
+  //   alias: {
+  //     '@': path.resolve(__dirname, 'src/'),
+  //     '~': path.resolve(__dirname, 'src/')
+  //   }
+  // }
+
 }
+

@@ -16,25 +16,46 @@
         <div class="navigation-items">
           <ul class="nav-list">
             <li class="nav-item">
-              <b-avatar size="3rem"><nuxt-link :to="localePath('/posts')">Blog</nuxt-link></b-avatar>
+              <b-avatar size="3rem">
+                <nuxt-link :to="localePath('/posts')">Blog</nuxt-link>
+              </b-avatar>
             </li>
             <li class="nav-item">
-              <b-avatar size="3rem"><nuxt-link :to="localePath('/about')">About</nuxt-link></b-avatar>
+              <b-avatar size="3rem">
+                <nuxt-link :to="localePath('/about')">About</nuxt-link>
+              </b-avatar>
             </li>
             <li class="nav-item" v-b-hover="handleHover">
-              <b-avatar v-if="!logged" @click.native="openLogin" size="3rem"><b-icon  icon="battery-full" scale="2"></b-icon></b-avatar>
-              <b-avatar v-else size="3rem" @click.native="openUserInfo" style="background-color: red"><b-icon icon="battery" scale="2"></b-icon></b-avatar>
-<!--              <b-icon v-if="isHovered" icon="battery-full" scale="2"></b-icon>-->
-<!--              <b-icon v-else icon="battery" scale="2"></b-icon>-->
-<!--              <button class="btn btn-secondary">Login</button>-->
-<!--              <nuxt-link :to="localePath('/admin')"></nuxt-link>-->
+              <b-avatar v-if="!logged" @click.native="openLogin" size="3rem">
+                <b-icon icon="battery-full" scale="2"></b-icon>
+              </b-avatar>
+              <b-avatar v-else size="3rem" @click.native="openUserInfo" style="background-color: #ff0000">
+                <b-icon icon="battery" scale="2"></b-icon>
+              </b-avatar>
+              <!--              <b-icon v-if="isHovered" icon="battery-full" scale="2"></b-icon>-->
+              <!--              <b-icon v-else icon="battery" scale="2"></b-icon>-->
+              <!--              <button class="btn btn-secondary">Login</button>-->
+              <!--              <nuxt-link :to="localePath('/admin')"></nuxt-link>-->
             </li>
           </ul>
         </div>
       </div>
       <div class="spacer"></div>
-      <div id="languageFlag">
-        <CountryFlag :country="$t('NATIONID')" size="small"></CountryFlag>
+
+      <div class="container">
+        <div class="row">
+          <div class="col align-self-center">
+            <div id="languageFlag">
+              <CountryFlag :country="$t('NATIONID')" size="medium"></CountryFlag>
+            </div>
+          </div>
+          <div class="col align-self-center">
+            <b-icon icon="battery-full" scale="2"></b-icon>
+          </div>
+        </div>
+      </div>
+
+      <div class="container">
       </div>
       <UurlaPoppoverLanguage targhetId="languageFlag"></UurlaPoppoverLanguage>
       <!--      <div class="spacer"></div>-->
@@ -56,8 +77,8 @@ export default {
       isHovered: false
     }
   },
-  computed:{
-    logged(){
+  computed: {
+    logged() {
       return this.$store.state.initialized
     }
   },
@@ -66,14 +87,14 @@ export default {
     CountryFlag,
     UurlaPoppoverLanguage
   },
-  methods:{
+  methods: {
     handleHover(hovered) {
       this.isHovered = hovered
     },
-    openLogin(){
+    openLogin() {
 
     },
-    openUserInfo(){
+    openUserInfo() {
 
     }
   }
@@ -85,7 +106,6 @@ export default {
 
 
 .intro {
-
   position: relative;
   text-align: center;
   top: 0px;
@@ -96,7 +116,7 @@ export default {
   background-color: #4c5180;
   padding: 10px;
   border-radius: 20px;
-  box-shadow: 5px 5px 5px 20px white;
+  box-shadow: 5px 5px 5px white;
   box-sizing: border-box;
   border: 1px solid black;
   display: flex;
@@ -166,6 +186,7 @@ export default {
 }
 
 .nav-item a {
+
   text-decoration: none;
   color: white;
 }
@@ -173,6 +194,7 @@ export default {
 .nav-item a:hover,
 .nav-item a:active,
 .nav-item a.nuxt-link-active {
-  color:greenyellow;
+
+  color: greenyellow;
 }
 </style>
