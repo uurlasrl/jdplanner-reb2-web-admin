@@ -12,46 +12,56 @@
     scrollable
     size="xl"
   >
-    <b-container >
-<b-row cols="3" >
-  <div v-for="app in apps">
-      <b-icon class="uurla-btn-icon"  @click="selectApp(app)" scale="2" :icon="app.icon"  ></b-icon>
-    <br>{{ app.name }}
-  </div>
-</b-row>
+    <b-container>
+      <b-row cols="3">
+        <div v-for="app in appList">
+          <b-icon class="uurla-btn-icon" @click="selectApp(app)" scale="2" :icon="app.Icon"></b-icon>
+          <br>{{ app.AppName }}
+        </div>
+      </b-row>
     </b-container>
   </b-modal>
 </template>
 
 <script>
 export default {
-  name: "AppsList",
-  props:{
-    apps:{
-      type:Array,
-      required:true
-    },
+  name: "AppListDialog",
+  props: {
+
     modalName: {
       type: String,
       required: true
     }
   },
-  methods:{
-    selectApp(app){
-      this.$router.push(this.localePath(app.path))
+  methods: {
+    selectApp(app) {
+      this.$router.push(this.localePath(app.AppLink))
+
+      this.$refs.appsmodal.hide()
     }
+  },
+  computed: {
+    appList() {
+
+      return this.$store.getters.getAppList;
+    }
+  },
+  created() {
+
   }
 }
 </script>
 
-<style >
+<style>
 .modalclassapplist > div {
   position: absolute !important;
   bottom: 45px !important;
   right: 10px !important;
   width: 30%;
-  height:30%;
+  height: 30%;
 
 }
-
+.uurla-btn-icon{
+  cursor:pointer;
+}
 </style>

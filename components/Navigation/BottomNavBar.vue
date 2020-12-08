@@ -2,7 +2,7 @@
   <div>
 
     <LoginComponent modal-name="login-modal"></LoginComponent>
-    <AppsList :apps="data.appsDataList" modal-name="apps-list"></AppsList>
+    <AppListDialog modal-name="apps-list"></AppListDialog>
 
     <nav class="navbar fixed-bottom navbar-expand-sm navbar-dark bg-dark">
 
@@ -73,18 +73,18 @@
 import TheSideNavToggle from "@/components/Navigation/TheSideNavToggle";
 import LoginComponent from "@/components/auth/LoginComponent";
 import UurlaPoppoverUserInfo from "@/components/Navigation/UurlaPoppoverUserInfo";
-import AppsList from "@/components/Navigation/AppsList";
+import AppListDialog from "@/components/AppRouter/AppListDialog";
 
 export default {
   name: "BottomNavBar",
   data() {
     return {
       userInfoShow: false,
-      data:{
-        appsDataList:[
-          {path:'/admin/usermanagement',name:'users',icon:'person'},
-          {path:'/admin/groups',name:'roles',icon:'person-check'}
-          ]
+      data: {
+        appsDataList: [
+          {path: '/admin/usermanagement', name: 'users', icon: 'person'},
+          {path: '/admin/groups', name: 'roles', icon: 'person-check'}
+        ]
       }
     }
   },
@@ -107,7 +107,7 @@ export default {
     TheSideNavToggle,
     LoginComponent,
     UurlaPoppoverUserInfo,
-    AppsList
+    AppListDialog
   ],
   methods: {
     openLoginModal() {
@@ -115,7 +115,7 @@ export default {
       this.$bvModal.show('login-modal')
     },
     toggleAppsModal() {
-        this.$bvModal.show('apps-list')
+      this.$bvModal.show('apps-list')
     },
     doLogout() {
       const that = this
@@ -145,49 +145,45 @@ export default {
 //se il login e' stato fatto salvo la lingua nel mio utente
         this.busy = true
 
-//debugger
-        this.$axios.$get(this.$config.baseUrl + this.$config.apiProjManAppBaseUrl + '/changeLanguage', {
-          params: {
-            "lang": "'" + lang + "'",
-            "$format": "json"
-          },
-          headers: {
-            "Authorization": "Bearer " + this.$store.state.userData.accessToken,
-            "accept": "application/json",
-          },
-          paramsSerializer: (params) => {
-            let result = '';
-            Object.keys(params).forEach(key => {
-              result += `${key}=${encodeURIComponent(params[key])}&`;
-            });
-            return result.substr(0, result.length - 1);
-          }
-        }).then(function (response) {
-          that.busy = false
-          that.$store.dispatch('setLanguage', lang)
-          const userData = JSON.parse(localStorage.getItem('uurla-user-data'))
-          userData.lang = lang
-          localStorage.setItem('uurla-user-data', JSON.stringify(userData))
-        })
-          .catch(function (error) {
-            that.busy = false
-            console.log("errore nel cambio della lingua")
-            console.log(error)
-            // that.makeToast(that.$t('msgPasswordnotchange'), 'danger')
-            // this.resetForm()
-            // that.nextTick(function () {
-            //   // do something cool
-            //   this.$v.$reset()
-            // })
-          });
+
+        this.$uurlaBEApi.changeLanguage(lang)
+          // this.$axios.$get(this.$config.baseUrl + this.$config.apiProjManAppBaseUrl + '/changeLanguage', {
+          //   params: {
+          //     "lang": "'" + lang + "'",
+          //     "$format": "json"
+          //   },
+          //   headers: {
+          //     "Authorization": "Bearer " + this.$store.state.userData.accessToken,
+          //     "accept": "application/json",
+          //   },
+          //   paramsSerializer: (params) => {
+          //     let result = '';
+          //     Object.keys(params).forEach(key => {
+          //       result += `${key}=${encodeURIComponent(params[key])}&`;
+          //     });
+          //     return result.substr(0, result.length - 1);
+          //   }
+          // })
+          .then(function (response) {
+            if (response) {
+              that.busy = false
+              that.$store.dispatch('setLanguage', lang)
+              const userData = JSON.parse(localStorage.getItem('uurla-user-data'))
+              userData.lang = lang
+              localStorage.setItem('uurla-user-data', JSON.stringify(userData))
+              that.$nextTick(() => {
+                that.$router.push(that.switchLocalePath(lang))
+              })
+            } else {
+              that.busy = false
+              console.log("errore nel cambio della lingua")
+              console.log(error)
+            }
+          })
+
+        //return this.switchLocalePath(lang)
+
       }
-
-      this.$nextTick(() => {
-        that.$router.push(that.switchLocalePath(lang))
-      })
-
-      //return this.switchLocalePath(lang)
-
     }
   }
 }

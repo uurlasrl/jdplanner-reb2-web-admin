@@ -9,7 +9,7 @@
       @show="resetModal"
       @hidden="resetModal"
       @ok="handleOk"
-      modal-class="modalclass"
+      modal-class="loginclass"
       header-bg-variant="dark"
       header-text-variant="light"
       body-bg-variant="dark"
@@ -105,7 +105,7 @@ export default {
       // Trigger submit handler
       this.handleSubmit()
     },
-    handleSubmit() {
+    async handleSubmit() {
       const that = this
       this.busy = true
       // Exit when the form isn't valid
@@ -114,81 +114,42 @@ export default {
       }
       // Push the name to submitted names
       this.submittedNames.push(this.name)
+      const response = await this.$uurlaBEApi.login(this.username, this.password)
+      this.busy = false;
+      if (response) {
+        this.$uurlaBEApi.loadApps( response.body.accessToken )
+      }else{
+        that.makeToast(that.$t('msgWrongPassword'), 'danger')
+        return
+      }
 
-      that.$axios.$post(that.$config.baseUrl + '/api/auth/login', {
-        "username": this.username,
-        "password": this.password,
-      }, {
-        headers: {
-          "Accept": "application/json",
-          "Content-type": "application/json"
-        }
+
+      this.$nextTick(() => {
+        this.$bvModal.hide(that.modalName)
+        this.$router.push(this.switchLocalePath(response.body.lang))
       })
-        .then(function (response) {
-          // il login e' andato a buon fine
 
-          const dataToBeStored = {...response.body, loginDateTime: new Date()}
-          that.$store.commit('setUserData', dataToBeStored)
-          localStorage.setItem('uurla-user-data', JSON.stringify(dataToBeStored))
-          localStorage.setItem('uurla-lang', dataToBeStored.lang)
-
-debugger
-          //chiamo l'api per leggere le apps
-          that.$axios.$get(that.$config.baseUrl + that.$config.apiProjManAppBaseUrl + '/FrontEndAppss', {
-            headers: {
-              "Authorization": "Bearer " + response.body.accessToken,
-              "accept": "application/json",
-            }
-          }).then(function (response) {
-            console.log(response)
-            that.busy = false
-            debugger;
-          })
-            .catch(function (error) {
-              that.busy = false
-              console.log(error)
-              debugger;
-            });
-
-          that.$nextTick(() => {
-            that.$bvModal.hide(that.modalName)
-            //debugger
-            that.$router.push(that.switchLocalePath(dataToBeStored.lang))
-
-
-          })
-        })
-        .catch(function (error) {
-          // nome o password errati
-          that.busy = false
-          that.$store.commit('clearStore')
-          console.log(error)
-        });
-
-      setTimeout(() => {
-        // Hide the modal manually
-      }, 3000)
     }
   },
   created() {
     const that = this;
     this.fn = setInterval(() => {
-      if(!this.$store.state.initialized) return
+      if (!this.$store.state.initialized) return
 
       const expiredRemainingTime = (that.$store.state.userData.expireIn + that.$store.state.userData.loginDateTime.getTime()) - (new Date())
       if (expiredRemainingTime < 5000) {
         //auto logoff needed
         that.$store.commit('clearStore')
         that.$router.push(that.localePath('/'))
-        that.makeToast(that.$t('msgForcedlogout'),'danger')
+        that.makeToast(that.$t('msgForcedlogout'), 'danger')
       } else if (expiredRemainingTime < 120000) {
         //if less then 2 minuted to the expiration time
         that.$bvModal.show('login-modal')
-        that.makeToast(that.$t('msgWaringlogout'),'warning')
+        that.makeToast(that.$t('msgWaringlogout'), 'warning')
       }
     }, 60000);
   },
-  beforeDestroy () {
+  beforeDestroy() {
     //debugger
     if (this.fn)
       clearInterval(this.fn);
@@ -197,14 +158,10 @@ debugger
 </script>
 
 <style>
-.modalclass > div {
+.loginclass > div {
   position: absolute !important;
   bottom: 45px !important;
   right: 10px !important;
-
 }
 
-/*.modalclass > .modal-dialog > .modal-content {*/
-/*  background-color:red !important;*/
-/*}*/
 </style>

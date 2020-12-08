@@ -50,7 +50,8 @@ export default {
   ** https://nuxtjs.org/guide/plugins
   */
   plugins: [
-    '~/plugins/Vuelidate'
+    '~/plugins/Vuelidate',
+    '~/plugins/UurlaBEApi'
   ],
   /*
   ** Auto import components

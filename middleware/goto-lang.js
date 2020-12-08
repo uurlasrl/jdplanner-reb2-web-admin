@@ -1,7 +1,14 @@
 export default function (context) {
 //gestione lingua
-  const lang = localStorage.getItem('uurla-lang')
- // debugger
-  if(context.app.i18n.locale == lang) return;
-  context.next(context.app.switchLocalePath(lang))
+  let lang = localStorage.getItem('uurla-lang')
+
+  if (!lang){
+    //setto comunque il default
+    lang = 'it'
+    localStorage.setItem('uurla-lang',lang)
+  }
+
+  if (context.app.i18n.locale != lang){
+    context.redirect(context.app.switchLocalePath(lang))
+  }
 }
