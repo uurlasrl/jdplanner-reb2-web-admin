@@ -103,12 +103,12 @@ export default {
       return this.$store.state.userData.email
     }
   },
-  components: [
+  components: {
     TheSideNavToggle,
     LoginComponent,
     UurlaPoppoverUserInfo,
     AppListDialog
-  ],
+  },
   methods: {
     openLoginModal() {
       //debugger
